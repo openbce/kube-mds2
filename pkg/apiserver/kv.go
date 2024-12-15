@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"go.etcd.io/etcd/api/v3/etcdserverpb"
+	"openbce.io/kmds/pkg/storage"
 )
 
 // Range gets the keys in the range from the key-value store.
@@ -14,8 +15,21 @@ func (m *MdsBridge) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdser
 // Put puts the given key into the key-value store.
 // A put request increments the revision of the key-value store
 // and generates one event in the event history.
-func (m *MdsBridge) Put(context.Context, *etcdserverpb.PutRequest) (*etcdserverpb.PutResponse, error) {
-	return nil, nil
+func (m *MdsBridge) Put(cxt context.Context, req *etcdserverpb.PutRequest) (*etcdserverpb.PutResponse, error) {
+	r := &storage.Record{
+		Key:   req.Key,
+		Value: req.Value,
+	}
+
+	_, err := m.storage.Create(r)
+
+	resp := &etcdserverpb.PutResponse{}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // DeleteRange deletes the given range from the key-value store.
