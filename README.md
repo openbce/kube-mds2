@@ -1,2 +1,3 @@
-# kmds
-Kubernetes Metadata Server
+# kube-mds2
+
+Kubernetes Metadata Sharding Server
