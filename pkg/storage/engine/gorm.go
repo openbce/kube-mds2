@@ -3,6 +3,7 @@ package engine
 import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"openbce.io/kmds/pkg/storage"
 )
@@ -28,8 +29,11 @@ type Gorm struct {
 	db *gorm.DB
 }
 
-func (g *Gorm) Create(r *storage.Record) (*storage.Record, error) {
-	res := g.db.Create(r)
+func (g *Gorm) CreateOrUpdate(r *storage.Record) (*storage.Record, error) {
+	res := g.db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "key"}},
+		DoUpdates: clause.AssignmentColumns([]string{"value", "lease", "create_revision", "mod_revision"}),
+	}).Create(r)
 
 	if res.Error != nil {
 		return nil, res.Error

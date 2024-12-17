@@ -9,6 +9,15 @@ import (
 
 // Range gets the keys in the range from the key-value store.
 func (m *MdsBridge) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdserverpb.RangeResponse, error) {
+
+	// rangeResponse := &etcdserverpb.RangeResponse{
+	// 	More:   resp.More,
+	// 	Count:  resp.Count,
+	// 	Header: resp.Header,
+	// 	Kvs:    toKVs(resp.Kvs...),
+	// }
+
+	// return rangeResponse, nil
 	return nil, nil
 }
 
@@ -16,20 +25,21 @@ func (m *MdsBridge) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdser
 // A put request increments the revision of the key-value store
 // and generates one event in the event history.
 func (m *MdsBridge) Put(cxt context.Context, req *etcdserverpb.PutRequest) (*etcdserverpb.PutResponse, error) {
+	// TODO (k82cn): handle PreKV and IgnoreValue
+
 	r := &storage.Record{
 		Key:   req.Key,
 		Value: req.Value,
+		Lease: req.Lease,
 	}
 
-	_, err := m.storage.Create(r)
-
-	resp := &etcdserverpb.PutResponse{}
+	_, err := m.storage.CreateOrUpdate(r)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return &etcdserverpb.PutResponse{}, nil
 }
 
 // DeleteRange deletes the given range from the key-value store.
