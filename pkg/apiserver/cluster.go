@@ -6,6 +6,8 @@ import (
 	"go.etcd.io/etcd/api/v3/etcdserverpb"
 )
 
+// TODO (k82cn): support member related api for loadbalance.
+
 // MemberAdd adds a member into the cluster.
 func (m *MdsBridge) MemberAdd(context.Context, *etcdserverpb.MemberAddRequest) (*etcdserverpb.MemberAddResponse, error) {
 	return nil, nil
@@ -23,7 +25,16 @@ func (m *MdsBridge) MemberUpdate(context.Context, *etcdserverpb.MemberUpdateRequ
 
 // MemberList lists all the members in the cluster.
 func (m *MdsBridge) MemberList(context.Context, *etcdserverpb.MemberListRequest) (*etcdserverpb.MemberListResponse, error) {
-	return nil, nil
+	return &etcdserverpb.MemberListResponse{
+		Header: &etcdserverpb.ResponseHeader{},
+		Members: []*etcdserverpb.Member{
+			{
+				Name:       "kube-mds2",
+				ClientURLs: []string{"0.0.0.0:2379"},
+				PeerURLs:   []string{"0.0.0.0:2379"},
+			},
+		},
+	}, nil
 }
 
 // MemberPromote promotes a member from raft learner (non-voting) to raft voting member.

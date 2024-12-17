@@ -11,8 +11,12 @@ var _ etcdserverpb.LeaseServer = (*MdsBridge)(nil)
 // LeaseGrant creates a lease which expires if the server does not receive a keepAlive
 // within a given time to live period. All keys attached to the lease will be expired and
 // deleted if the lease expires. Each expired key generates a delete event in the event history.
-func (m *MdsBridge) LeaseGrant(context.Context, *etcdserverpb.LeaseGrantRequest) (*etcdserverpb.LeaseGrantResponse, error) {
-	return nil, nil
+func (m *MdsBridge) LeaseGrant(_ context.Context, req *etcdserverpb.LeaseGrantRequest) (*etcdserverpb.LeaseGrantResponse, error) {
+	return &etcdserverpb.LeaseGrantResponse{
+		Header: &etcdserverpb.ResponseHeader{},
+		ID:     req.TTL,
+		TTL:    req.TTL,
+	}, nil
 }
 
 // LeaseRevoke revokes a lease. All keys attached to the lease will expire and be deleted.

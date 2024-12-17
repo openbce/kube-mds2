@@ -4,21 +4,42 @@ import (
 	"context"
 
 	"go.etcd.io/etcd/api/v3/etcdserverpb"
+	mvccpb "go.etcd.io/etcd/api/v3/mvccpb"
+	"k8s.io/klog"
+
 	"openbce.io/kmds/pkg/storage"
 )
 
 // Range gets the keys in the range from the key-value store.
-func (m *MdsBridge) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdserverpb.RangeResponse, error) {
+func (m *MdsBridge) Range(cxt context.Context, req *etcdserverpb.RangeRequest) (*etcdserverpb.RangeResponse, error) {
+	// TODO (k82cn): handle key range
 
-	// rangeResponse := &etcdserverpb.RangeResponse{
-	// 	More:   resp.More,
-	// 	Count:  resp.Count,
-	// 	Header: resp.Header,
-	// 	Kvs:    toKVs(resp.Kvs...),
-	// }
+	records, err := m.storage.Range([][]byte{req.Key})
+	if err != nil {
+		return nil, err
+	}
+
+	kvs := make([]*mvccpb.KeyValue, 0, len(records))
+
+	for _, r := range records {
+		kvs = append(kvs, &mvccpb.KeyValue{
+			Key:            r.Key,
+			Value:          r.Value,
+			Lease:          r.Lease,
+			CreateRevision: r.Revision,
+			ModRevision:    r.Revision,
+		})
+	}
 
 	// return rangeResponse, nil
-	return nil, nil
+	return &etcdserverpb.RangeResponse{
+		Header: &etcdserverpb.ResponseHeader{
+			Revision: req.Revision,
+		},
+		More:  false,
+		Count: 1,
+		Kvs:   kvs,
+	}, nil
 }
 
 // Put puts the given key into the key-value store.
@@ -33,11 +54,13 @@ func (m *MdsBridge) Put(cxt context.Context, req *etcdserverpb.PutRequest) (*etc
 		Lease: req.Lease,
 	}
 
-	_, err := m.storage.CreateOrUpdate(r)
+	r, err := m.storage.CreateOrUpdate(r)
 
 	if err != nil {
 		return nil, err
 	}
+
+	klog.Info(r.ID)
 
 	return &etcdserverpb.PutResponse{}, nil
 }

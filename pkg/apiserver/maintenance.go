@@ -12,8 +12,16 @@ func (m *MdsBridge) Alarm(context.Context, *etcdserverpb.AlarmRequest) (*etcdser
 }
 
 // Status gets the status of the member.
-func (m *MdsBridge) Status(context.Context, *etcdserverpb.StatusRequest) (*etcdserverpb.StatusResponse, error) {
-	return nil, nil
+func (m *MdsBridge) Status(cxt context.Context, req *etcdserverpb.StatusRequest) (*etcdserverpb.StatusResponse, error) {
+	size, err := m.storage.Size()
+	if err != nil {
+		return nil, err
+	}
+	return &etcdserverpb.StatusResponse{
+		Header:  &etcdserverpb.ResponseHeader{},
+		DbSize:  size,
+		Version: "v3",
+	}, nil
 }
 
 // Defragment defragments a member's backend database to recover storage space.
