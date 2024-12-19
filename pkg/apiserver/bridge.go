@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 
-	"openbce.io/kmds/pkg/storage"
+	"openbce.io/kube-mds2/pkg/storage"
 )
 
 // Metadata Server Bridge

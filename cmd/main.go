@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"openbce.io/kmds/pkg/apiserver"
-	_ "openbce.io/kmds/pkg/storage/engine"
+	"openbce.io/kube-mds2/pkg/apiserver"
+	_ "openbce.io/kube-mds2/pkg/storage/engine"
 )
 
 var option = apiserver.MdsBridgeConfig{}

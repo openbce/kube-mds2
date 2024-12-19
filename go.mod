@@ -1,4 +1,4 @@
-module openbce.io/kmds
+module openbce.io/kube-mds2
 
 go 1.22.5
 

@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"openbce.io/kmds/pkg/storage"
+	"openbce.io/kube-mds2/pkg/storage"
 )
 
 func init() {

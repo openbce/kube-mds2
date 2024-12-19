@@ -6,7 +6,7 @@ import (
 	"go.etcd.io/etcd/api/v3/etcdserverpb"
 	mvccpb "go.etcd.io/etcd/api/v3/mvccpb"
 
-	"openbce.io/kmds/pkg/storage"
+	"openbce.io/kube-mds2/pkg/storage"
 )
 
 // Range gets the keys in the range from the key-value store.
