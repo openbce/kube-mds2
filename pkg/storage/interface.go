@@ -1,11 +1,12 @@
 package storage
 
 type Record struct {
-	ID       uint64
-	Revision int64
-	Lease    int64
-	Key      []byte `gorm:"index:key_index,unique"`
-	Value    []byte
+	ID        uint64
+	Revision  int64
+	Lease     int64
+	Key       []byte `gorm:"index:key_index,unique"`
+	Value     []byte
+	PrevValue []byte
 }
 
 type Event struct {

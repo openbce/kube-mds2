@@ -32,7 +32,8 @@ type Gorm struct {
 func (g *Gorm) CreateOrUpdate(r *storage.Record) (*storage.Record, error) {
 	assignments := clause.AssignmentColumns([]string{"value", "lease"})
 	assignments = append(assignments, clause.Assignments(map[string]interface{}{
-		"revision": gorm.Expr("revision + ?", 1),
+		"revision":   gorm.Expr("revision + ?", 1),
+		"prev_value": gorm.Expr("prev_value = value"),
 	})...)
 
 	res := g.db.Clauses(clause.OnConflict{

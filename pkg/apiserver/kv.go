@@ -5,7 +5,6 @@ import (
 
 	"go.etcd.io/etcd/api/v3/etcdserverpb"
 	mvccpb "go.etcd.io/etcd/api/v3/mvccpb"
-	"k8s.io/klog"
 
 	"openbce.io/kmds/pkg/storage"
 )
@@ -60,9 +59,13 @@ func (m *MdsBridge) Put(cxt context.Context, req *etcdserverpb.PutRequest) (*etc
 		return nil, err
 	}
 
-	klog.Info(r.ID)
+	// TODO (k82cn): add an event here for Put api
 
-	return &etcdserverpb.PutResponse{}, nil
+	return &etcdserverpb.PutResponse{
+		Header: &etcdserverpb.ResponseHeader{
+			Revision: r.Revision,
+		},
+	}, nil
 }
 
 // DeleteRange deletes the given range from the key-value store.
